@@ -3,7 +3,11 @@
  */
 const deck = $( ".deck" );
 const cards = $( ".card" );
-cards.children().addClass("card match");
+const restartButton = $( ".restart" );
+
+// Reset all card classes so the are hidden to start
+resetCards();
+
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -12,7 +16,7 @@ cards.children().addClass("card match");
  */
 
  const shuffledCards = shuffle(cards);
- /*deck.children().remove();*/
+
  shuffledCards.each( function( index, element ) {
    deck.append(element);
  })
@@ -44,3 +48,24 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+$( ".card" ).click(function() {
+  displayCard($(this));
+})
+
+$(".restart").click(function() {
+  resetCards();
+})
+
+/**
+* @description Changes the class of a card to display its icon
+*/
+function displayCard(element) {
+  element.addClass("open show");
+}
+
+/**
+* @description Resets the class on all cards so that they are hidden.
+*/
+function resetCards() {
+  cards.children().removeClass("open show match").addClass("card");
+}
