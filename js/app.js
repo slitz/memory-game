@@ -4,6 +4,7 @@
 const deck = $( ".deck" );
 const cards = $( ".card" );
 const restartButton = $( ".restart" );
+let openCardsList = [];
 
 // Reset all card classes so the are hidden to start
 resetCards();
@@ -37,7 +38,6 @@ function shuffle(array) {
     return array;
 }
 
-
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
@@ -48,12 +48,9 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-$( ".card" ).click(function() {
+$(".card .fa").click(function() {
   displayCard($(this));
-})
-
-$(".restart").click(function() {
-  resetCards();
+  addToOpenCardsListAndCheckForMatch($(this));
 })
 
 /**
@@ -64,8 +61,64 @@ function displayCard(element) {
 }
 
 /**
+* @description Adds the selected card to a list of open cards and, if another card already exists in the list,
+* checks for a match
+*/
+function addToOpenCardsListAndCheckForMatch(element) {
+  openCardsList.push(element);
+  if(openCardsList.length === 2) {
+    if(openCardsList[0].attr("class") === openCardsList[1].attr("class")) {
+      lockCardsInOpenPosition();
+    } else {
+      hideCards();
+    }
+    removeCardsFromList();
+  }
+}
+
+/**
 * @description Resets the class on all cards so that they are hidden.
 */
 function resetCards() {
   cards.children().removeClass("open show match").addClass("card");
 }
+
+/**
+* @description Changes the class on matching cards so they remain visible
+*/
+function lockCardsInOpenPosition() {
+  $.each(openCardsList, function() {
+    $(this).addClass("match");
+  })
+}
+
+/**
+* @description Changes the class on non matching cards so they are hidden and
+* removes cards from open cards list
+*/
+function hideCards() {
+  $.each(openCardsList, function(index, element) {
+    $(this).removeClass("open show", 1000);
+  })
+}
+
+/**
+* @description Empties the list of open cards
+*/
+function removeCardsFromList() {
+  openCardsList.length = 0;
+}
+
+// Sleep function from https://www.sitepoint.com/delay-sleep-pause-wait/
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+$(".restart").click(function() {
+  location.reload();
+})
