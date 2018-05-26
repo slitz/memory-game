@@ -33,6 +33,17 @@ h1 {
     font-weight: 300;
 }
 
+table {
+    table-layout: fixed;
+    width: 50%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+td {
+  text-align: center;
+}
+
 /*
  * Styles for the deck of cards
  */
@@ -87,7 +98,7 @@ h1 {
 
 .score-panel {
     text-align: left;
-    width: 345px;
+    width: 100%;
     margin-bottom: 10px;
 }
 
@@ -103,7 +114,13 @@ h1 {
     display: inline-block;
 }
 
+.score-panel .timer {
+    list-style: none;
+    display: inline-block;
+    float: center;
+}
+
 .score-panel .restart {
-    float: right;
+    float: center;
     cursor: pointer;
 }

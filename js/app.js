@@ -5,9 +5,17 @@ const deck = $( ".deck" );
 const cards = $( ".card" );
 const restartButton = $( ".restart" );
 let openCardsList = [];
+let moveCounter = 0;
+let matchCounter = 0;
+let seconds = 0;
+let minutes = 0;
+let timer;
 
 // Reset all card classes so the are hidden to start
 resetCards();
+
+// Starts the game timer
+startTimer();
 
 /*
  * Display the cards on the page
@@ -67,8 +75,11 @@ function displayCard(element) {
 function addToOpenCardsListAndCheckForMatch(element) {
   openCardsList.push(element);
   if(openCardsList.length === 2) {
+    incrementMoveCount();
+    evaluateStarRating();
     if(openCardsList[0].attr("class") === openCardsList[1].attr("class")) {
       lockCardsInOpenPosition();
+      incrementMatchCountAndCheckForWin();
     } else {
       hideCards();
     }
@@ -103,10 +114,88 @@ function hideCards() {
 }
 
 /**
+* @description Tracks the number of matches and determines if all cards have
+* successfully been matched
+*/
+function incrementMatchCountAndCheckForWin() {
+  matchCounter++;
+  if(matchCounter === (cards.length / 2)) {
+    stopTimer();
+    populateDialogValues();
+    displayDialog();
+  }
+}
+
+/**
+* @description Tracks the number of moves
+*/
+function incrementMoveCount() {
+  moveCounter++;
+  $(".moves").text(moveCounter);
+}
+
+/**
+* @description Reduces the star rating by rmoving stars based on the number
+* of moves.
+*/
+function evaluateStarRating() {
+  if(moveCounter === 15 || moveCounter === 20){
+    $(".stars").find("li").last().remove();
+  }
+}
+
+/**
 * @description Empties the list of open cards
 */
 function removeCardsFromList() {
   openCardsList.length = 0;
+}
+
+/**
+* @description sets the values in the dialog elements
+*/
+function populateDialogValues() {
+  let gameTime = $(".timer").text();
+  let gameRating = $(".stars").find("li").length;
+  $("#time").text(gameTime);
+  $("#rating").text(gameRating);
+}
+
+/**
+* @description Displays the congratulations dialog
+*/
+function displayDialog() {
+  $("#popup").dialog({
+    buttons: {
+        "Play again": function() {
+          location.reload();
+        },
+        Quit: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+  });
+}
+
+// Add function adapted from https://codepad.co/snippet/YMYUDYgr
+function add() {
+    seconds++;
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes++;
+    }
+    $(".timer").text((minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") +
+      ":" + (seconds > 9 ? seconds : "0" + seconds));
+
+    startTimer();
+  }
+
+function startTimer(){
+  timer = setTimeout(add, 1000);
+}
+
+function stopTimer(){
+  clearTimeout(timer);
 }
 
 restartButton.click(function() {
