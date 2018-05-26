@@ -10,6 +10,8 @@ let matchCounter = 0;
 let seconds = 0;
 let minutes = 0;
 let timer;
+const firstRatingThreshold = 15;
+const secondRatingThreshold = 20;
 
 // Reset all card classes so the are hidden to start
 resetCards();
@@ -104,8 +106,7 @@ function lockCardsInOpenPosition() {
 }
 
 /**
-* @description Changes the class on non matching cards so they are hidden and
-* removes cards from open cards list
+* @description Changes the class on non matching cards so they are hidden
 */
 function hideCards() {
   $.each(openCardsList, function(index, element) {
@@ -139,7 +140,7 @@ function incrementMoveCount() {
 * of moves.
 */
 function evaluateStarRating() {
-  if(moveCounter === 15 || moveCounter === 20){
+  if(moveCounter === firstRatingThreshold || moveCounter === secondRatingThreshold){
     $(".stars").find("li").last().remove();
   }
 }
